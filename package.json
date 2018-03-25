@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.3"
+    "child_process": "^1.0.2",
+    "express": "^4.16.3",
+    "google-home-notifier": "^1.2.0",
+    "npm": "^5.8.0"
   }
 }
