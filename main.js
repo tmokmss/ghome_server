@@ -29,7 +29,7 @@ app.get('/lightoff', function (req, res) {
   });
 });
 
-app.get('/lightOn', function (req, res) {
+app.get('/lighton', function (req, res) {
   res.set('Content-Type', 'application/json');
   res.json({ name: 'test user' });
   exec('irsend SEND_ONCE light LightFavorite', (err, stdout, stderr) => {
