@@ -20,18 +20,18 @@ app.get('/', function (req, res) {
 });
 
 app.get('/lightoff', function (req, res) {
+  res.json({status: 'success'});
   exec('irsend SEND_ONCE light LightOff', (err, stdout, stderr) => {
   });
   googlehome.notify("電気を消しました", function (res2) {
-    console.log(res2);
   });
 });
 
 app.get('/lighton', function (req, res) {
+  res.json({status: 'success'});
   exec('irsend SEND_ONCE light LightFavorite', (err, stdout, stderr) => {
   });
   googlehome.notify("電気を付けました", function (res2) {
-    console.log(res2);
   });
 });
 
