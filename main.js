@@ -26,33 +26,41 @@ app.get('/', function (req, res) {
 });
 
 app.post('/lightoff', function (req, res) {
-  var isValid = isValidRequest(req.body["password"]);
-  if (!isValid) {
-    res.json({ status: 'failure' });
-    return;
-  }
-  res.json({ status: 'success' });
-  exec('irsend SEND_ONCE light LightOff', (err, stdout, stderr) => {
-  });
-  googlehome.notify("電気を消しました", function (res2) {
-  });
+  handleLight(req, res, "Off");
 });
 
 app.post('/lighton', function (req, res) {
-  var isValid = isValidRequest(req.body["password"]);
-  if (!isValid) {
-    res.json({ status: 'failure' });
-    return;
-  }
-  res.json({ status: 'success' });
-  exec('irsend SEND_ONCE light LightFavorite', (err, stdout, stderr) => {
-  });
-  googlehome.notify("電気を付けました", function (res2) {
-  });
+  handleLight(req, res, "On");
 });
 
 function isValidRequest(pass) {
   return pass == password;
+}
+
+function handleLight(req, res, mode) {
+  var isValid = isValidRequest(req.body["password"]);
+  res.set('Content-Type', 'application/json');
+  if (!isValid) {
+    res.json({ status: 'failure' });
+    return;
+  }
+  res.json({ status: 'success' });
+  exec(getIrCommand(mode), (err, stdout, stderr) => {
+  });
+  googlehome.notify(getNotifyMessage(mode), (res_notify) => {
+  });
+}
+
+function getIrCommand(mode) {
+  if (mode == "On") return 'irsend SEND_ONCE light LightFavorite';
+  if (mode == "Off") return 'irsend SEND_ONCE light LightOff';
+  return "";
+}
+
+function getNotifyMessage(mode) {
+  if (mode == "On") return "電気をつけました";
+  if (mode == "Off") return "電気を消しました";
+  return "";
 }
 
 app.listen(9000);
