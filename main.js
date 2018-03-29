@@ -1,12 +1,18 @@
 const exec = require('child_process').exec;
 
 const googlehome = require('google-home-notifier')
+const bodyParser = require('body-parser');
+const express = require('express');
+
 const language = 'ja';
 const addr = process.env.GHOME_ADDR;
-googlehome.ip(addr, language);
+const password = process.env.IFTTT_PASSWORD;
 
-express = require('express');
+googlehome.ip(addr, language);
 var app = express();
+
+app.use(bodyParser.json());
+
 
 app.get('/', function (req, res) {
   res.set('Content-Type', 'application/json');
@@ -19,20 +25,34 @@ app.get('/', function (req, res) {
   //});
 });
 
-app.get('/lightoff', function (req, res) {
-  res.json({status: 'success'});
+app.post('/lightoff', function (req, res) {
+  var isValid = isValidRequest(req.body["password"]);
+  if (!isValid) {
+    res.json({ status: 'failure' });
+    return;
+  }
+  res.json({ status: 'success' });
   exec('irsend SEND_ONCE light LightOff', (err, stdout, stderr) => {
   });
   googlehome.notify("電気を消しました", function (res2) {
   });
 });
 
-app.get('/lighton', function (req, res) {
-  res.json({status: 'success'});
+app.post('/lighton', function (req, res) {
+  var isValid = isValidRequest(req.body["password"]);
+  if (!isValid) {
+    res.json({ status: 'failure' });
+    return;
+  }
+  res.json({ status: 'success' });
   exec('irsend SEND_ONCE light LightFavorite', (err, stdout, stderr) => {
   });
   googlehome.notify("電気を付けました", function (res2) {
   });
 });
+
+function isValidRequest(pass) {
+  return pass == password;
+}
 
 app.listen(9000);
